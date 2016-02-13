@@ -1,10 +1,8 @@
 module.exports = (robot) ->
 
-  robot.hear /aphorism\:? \"([^\"]*)\" [-\w]*(.*)/i, (res) ->
+  robot.hear /aphorism\:? \"([^\"]*)\" ?[- ]*(.*)/i, (res) ->
     text = res.match[1]
     name = res.match[2]
+    b64data = new Buffer(text + '\0' + name).toString('base64');
 
-    text64 = new Buffer(text).toString('base64');
-    name64 = new Buffer(name).toString('base64');
-
-    res.reply "http://aphorisms.kazamatsuri.org/?#{text64}?#{name64}"
+    res.reply "http://aphorisms.kazamatsuri.org/?#{b64data}"
