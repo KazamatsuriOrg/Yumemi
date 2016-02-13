@@ -1,6 +1,6 @@
 module.exports = (robot) ->
 
-  robot.respond /aphorism\:? \"([^\"]*)\" [-\w]*(.*)/i, (res) ->
+  robot.hear /aphorism\:? \"([^\"]*)\" [-\w]*(.*)/i, (res) ->
     text = res.match[1]
     name = res.match[2]
 
