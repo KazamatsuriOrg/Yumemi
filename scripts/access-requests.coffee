@@ -24,7 +24,7 @@ module.exports = (robot) ->
 
   ERR_DISCORD_ERROR = "I'm so sorry, something appears to be broken, as I am unable to grant you access! >_< ({0})"
 
-  MSG_WELCOME = "Your identity has been verified, welcome!"
+  MSG_WELCOME = "Your identity has been verified, congratulations! You are our 2,500,000th user! ... Oh my, that was inexcusable. I humbly, humbly beg your pardon! It's quite a long way from the truth, actually. To be precise, you are the 2,497,288th user. I cheated by 2712 places. And yet, I thought that you would just accept it happily... Actually, the number I just gave you is not exactly accurate, either. Some time ago, I made an exception and let two people enter the Discord without verification. So technically, you're the 2,497,290th user. I sincerely beg your pardon..."
 
   # Listen for posts in #access-requests
   robot.listen(
