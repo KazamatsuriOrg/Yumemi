@@ -35,7 +35,7 @@ module.exports = (robot) ->
   convert_currency = (data, val, from, to) ->
     return (val / data.rates[from] * data.rates[to]).toFixed(2)
 
-  robot.hear /(?:what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ \?]+)?(?: in ([^ \?]+))?/i, (res) ->
+  robot.hear /(?:what's |what is |how much is )?([^\d])?([\d,\.]+) ?([^ \?]+)?(?: in ([^ \?]+))?/i, (res) ->
     val = parseFloat(res.match[2].replace(',', '.'))
     prefix = res.match[1]
     suffix = res.match[3]
