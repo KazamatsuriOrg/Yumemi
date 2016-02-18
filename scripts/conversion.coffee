@@ -32,12 +32,12 @@ module.exports = (robot) ->
         data.rates[data.base] = 1.0 # Base currency maps 1:1 to itself (duh)
         cb val / data.rates[from] * data.rates[to]
 
-  robot.hear /(what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ ]+)? in ([^ \?]+)/, (res) ->
-    val = parseFloat(res.match[3].replace(',', '.'))
-    prefix = res.match[2]
-    suffix = res.match[4]
-    from = SYMBOLS[prefix] || SYMBOLS[suffix] || res.match[4]
-    to = res.match[5]
+  robot.hear /(?:what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ ]+)? in ([^ \?]+)/, (res) ->
+    val = parseFloat(res.match[2].replace(',', '.'))
+    prefix = res.match[1]
+    suffix = res.match[3]
+    from = SYMBOLS[prefix] || SYMBOLS[suffix] || suffix
+    to = res.match[4]
     to = SYMBOLS[to] || to
 
     # If both units are currencies, run a lookup
