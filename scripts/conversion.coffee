@@ -35,19 +35,28 @@ module.exports = (robot) ->
   convert_currency = (data, val, from, to) ->
     return (val / data.rates[from] * data.rates[to]).toFixed(2)
 
-  robot.hear /(?:what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ \?]+)? in ([^ \?]+)/, (res) ->
+  robot.hear /(?:what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ \?]+)?(?: in ([^ \?]+))?/, (res) ->
     val = parseFloat(res.match[2].replace(',', '.'))
     prefix = res.match[1]
     suffix = res.match[3]
     from = SYMBOLS[prefix] || SYMBOLS[suffix] || suffix
     to = res.match[4]
     to = SYMBOLS[to] || to
+    ufrom = from.toUpperCase()
+    uto = if to then to.toUpperCase() else undefined
 
     # If both units are currencies, run a lookup
-    if from in CURRENCIES and to in CURRENCIES
+    if ufrom in CURRENCIES and (uto in CURRENCIES or uto is undefined)
       lookup_currencies (data) ->
-        val2 = convert_currency data, val, from, to
-        res.reply "#{val} #{from} would be... #{val2_fix} #{to}. Do note that my sources only update once per day, so this may be a little bit old."
+        if uto
+          val2 = convert_currency data, val, ufrom, uto
+          res.reply "#{val} #{ufrom} would be... #{val2} #{uto}. Do note that my sources only update once per day, so this may be a little bit old."
+        else
+          usd = convert_currency data, val, ufrom, "USD"
+          eur = convert_currency data, val, ufrom, "EUR"
+          gbp = convert_currency data, val, ufrom, "GBP"
+          jpy = convert_currency data, val, ufrom, "JPY"
+          res.reply "#{val} #{ufrom} would be $#{usd}, €#{eur}, £#{gbp} or ¥#{jpy}. Do note that my sources only update once per day, so this may be a little bit old."
       return
 
     # Try unit conversion using math.js first
@@ -61,17 +70,3 @@ module.exports = (robot) ->
       catch error
         res.reply error
       return
-
-  robot.hear /(?:what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ ]+)?\??$/, (res) ->
-    val = parseFloat(res.match[2].replace(',', '.'))
-    prefix = res.match[1]
-    suffix = res.match[3]
-    from = SYMBOLS[prefix] || SYMBOLS[suffix] || suffix
-
-    if from in CURRENCIES
-      lookup_currencies (data) ->
-        usd = convert_currency data, val, from, "USD"
-        eur = convert_currency data, val, from, "EUR"
-        gbp = convert_currency data, val, from, "GBP"
-        jpy = convert_currency data, val, from, "JPY"
-        res.reply "#{val} #{from} would be $#{usd}, €#{eur}, £#{gbp} or ¥#{jpy}. Do note that my sources only update once per day, so this may be a little bit old."
