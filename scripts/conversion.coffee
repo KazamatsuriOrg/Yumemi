@@ -23,11 +23,18 @@ module.exports = (robot) ->
     '円':   'JPY'
     'yen':  'JPY'
 
+  RATES = {}
+
+  lookup_currency = (from, to, cb) ->
+    unless RATES
+      robot.http('https://api.fixer.io/latest?base=USD')
+        .get() ()
+
   robot.hear /(what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ ]+)? in ([^ \?]+)/, (res) ->
     val = parseFloat(res.match[3].replace(',', '.'))
     prefix = res.match[2]
     suffix = res.match[4]
-    from = SYMBOLS[prefix] || SYMBOLS[suffix] || res.match[5]
+    from = SYMBOLS[prefix] || SYMBOLS[suffix] || res.match[4]
     to = res.match[5]
     to = SYMBOLS[to] || to
 
