@@ -2,10 +2,34 @@ math = require 'mathjs'
 
 module.exports = (robot) ->
 
-  robot.hear /(what's |what is |how much is )?([\$]?[\d,\.]+[\€\¥\£]?) ?(\w+) in ([^ ]+)/, (res) ->
-    val = parseFloat(res.match[2].replace(',', '.'))
-    from = res.match[3]
-    to = res.match[4]
+  SYMBOLS =
+    '$':    'USD'
+    'A$':   'AUD'
+    'C$':   'CAD'
+    'Can$': 'CAD'
+    'HK$':  'HKD'
+    'NZ$':  'NZD'
+    'S$':   'SGD'
+    'US$':  'USD'
+    'R$':   'BRL'
+    '€':    'EUR'
+    'kr':   'SEK'
+    'Dkr':  'DKK'
+    'Nkr':  'NOK'
+    '£':    'GBP'
+    '₤':    'GBP'
+    '₽':    'RUB'
+    '¥':    'JPY'
+    '円':   'JPY'
+    'yen':  'JPY'
+
+  robot.hear /(what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ ]+)? in ([^ \?]+)/, (res) ->
+    val = parseFloat(res.match[3].replace(',', '.'))
+    prefix = res.match[2]
+    suffix = res.match[4]
+    from = SYMBOLS[prefix] || SYMBOLS[suffix] || res.match[5]
+    to = res.match[5]
+    to = SYMBOLS[to] || to
 
     # Try unit conversion using math.js first
     try
@@ -17,3 +41,6 @@ module.exports = (robot) ->
         res.reply "#{val} #{from} = #{math_to} #{to}"
       catch error
         res.reply error
+
+    # Give up!
+    res.reply "I'm sorry, I don't know how to convert #{from} into #{to}..."
