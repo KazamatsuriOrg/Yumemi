@@ -33,7 +33,7 @@ module.exports = (robot) ->
         cb data
 
   convert_currency = (data, val, from, to) ->
-    return val / data.rates[from] * data.rates[to]
+    return (val / data.rates[from] * data.rates[to]).toFixed(2)
 
   robot.hear /(?:what's |what is |how much is )?([^\d])?([\d,\.]+)? ?([^ \?]+)? in ([^ \?]+)/, (res) ->
     val = parseFloat(res.match[2].replace(',', '.'))
@@ -47,7 +47,6 @@ module.exports = (robot) ->
     if from in CURRENCIES and to in CURRENCIES
       lookup_currencies (data) ->
         val2 = convert_currency data, val, from, to
-        val2_fix = val2.toFixed(2)
         res.reply "#{val} #{from} would be... #{val2_fix} #{to}. Do note that my sources only update once per day, so this may be a little bit old."
       return
 
@@ -71,8 +70,8 @@ module.exports = (robot) ->
 
     if from in CURRENCIES
       lookup_currencies (data) ->
-        usd = (convert_currency data, val, from, "USD").toFixed(2)
-        eur = (convert_currency data, val, from, "EUR").toFixed(2)
-        gbp = (convert_currency data, val, from, "GBP").toFixed(2)
-        jpy = (convert_currency data, val, from, "JPY").toFixed(2)
+        usd = convert_currency data, val, from, "USD"
+        eur = convert_currency data, val, from, "EUR"
+        gbp = convert_currency data, val, from, "GBP"
+        jpy = convert_currency data, val, from, "JPY"
         res.reply "#{val} #{from} would be $#{usd}, €#{eur}, £#{gbp} or ¥#{jpy}. Do note that my sources only update once per day, so this may be a little bit old."
