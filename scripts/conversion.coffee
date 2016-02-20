@@ -68,5 +68,4 @@ module.exports = (robot) ->
         math_to = math_from.toNumber to
         res.reply "Unless I misheard, #{val} #{from} = #{math_to} #{to}."
       catch error
-        res.reply error
       return
